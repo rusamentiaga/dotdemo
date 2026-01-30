@@ -419,15 +419,48 @@
         function makeOrthogonal() {
             const ax = pointA.X();
             const ay = pointA.Y();
-            pointB.moveTo([-ay, ax], 500);
+            const bx = pointB.X();
+            const by = pointB.Y();
+
+            const magA = Math.sqrt(ax * ax + ay * ay);
+            const magB = Math.sqrt(bx * bx + by * by);
+
+            if (magA > 0) {
+                // Determine unit vector orthogonal to A: (-ay, ax) / |A|
+                const uOx = -ay / magA;
+                const uOy = ax / magA;
+
+                // Check direction: if B · OrthogonalVector >= 0, use it, else use opposite
+                if (bx * uOx + by * uOy >= 0) {
+                    pointB.moveTo([uOx * magB, uOy * magB], 500);
+                } else {
+                    pointB.moveTo([-uOx * magB, -uOy * magB], 500);
+                }
+            }
         }
 
         // Make vectors parallel
         function makeParallel() {
             const ax = pointA.X();
             const ay = pointA.Y();
-            const scale = 0.7;
-            pointB.moveTo([ax * scale, ay * scale], 500);
+            const bx = pointB.X();
+            const by = pointB.Y();
+
+            const magA = Math.sqrt(ax * ax + ay * ay);
+            const magB = Math.sqrt(bx * bx + by * by);
+
+            if (magA > 0) {
+                // Determine unit vector of A
+                const uAx = ax / magA;
+                const uAy = ay / magA;
+
+                // Check direction: if B · A >= 0, align with A, else align opposite
+                if (ax * bx + ay * by >= 0) {
+                    pointB.moveTo([uAx * magB, uAy * magB], 500);
+                } else {
+                    pointB.moveTo([-uAx * magB, -uAy * magB], 500);
+                }
+            }
         }
 
         // Normalize vectors to magnitude 1
